@@ -1,0 +1,24 @@
+@font-face {
+  font-family: Roboto;
+  src: url('./fonts/XinYiGuanHeiTi.ttf');
+}
+.content__container {
+  font-family: Roboto;
+  z-index: 10;
+  position: absolute;
+  bottom: 20%;
+  left: 29%;
+  &__list {
+    &__item {
+      font-size: 5.5rem;
+      text-align: center;
+      color: white;
+      font-weight: 600;
+      margin: 0;
+      line-height: 0;
+      &:nth-of-type(5) {
+        color: yellow;
+      }
+    }
+  }
+}

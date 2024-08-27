@@ -9,22 +9,19 @@
  */
 import * as THREE from 'three';
 // eslint-disable-next-line import/no-unresolved
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { AfterimagePass } from 'three/addons/postprocessing/AfterimagePass.js';
-import { Line2 } from 'three/addons/lines/Line2.js';
-import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
-import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
-import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
-// import { HoloEffectShader } from './HoloEffectShader';
-import getStarfield from './background';
+import { Line2 } from 'three/examples/jsm/lines/Line2.js';
+import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { AfterimagePass } from 'three/examples/jsm/postprocessing/AfterimagePass.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { Pane } from 'tweakpane';
+
 // glsl;
-import rotate3d from '../shaders/includes/rotation-3d.glsl';
+import getStarfield from './background';
 
 const device = {
   width: window.innerWidth,
@@ -32,19 +29,19 @@ const device = {
   pixelRatio: window.devicePixelRatio
 };
 
-const envParams = {
-  toneMappingExposure: 3.0,
+const environmentParameters = {
+  toneMappingExposure: 3,
   rotationSpeed: 3,
   backgroundColor: '#020202'
 };
 
-const postParams = {
+const postParameters = {
   threshold: 0.06,
-  strength: 0.6,
+  strength: 0.38,
   radius: 1
 };
 
-const eulerParams = {
+const eulerParameters = {
   x: 0,
   y: 0,
   z: 0
@@ -54,7 +51,7 @@ const humanMaterialColor = {
   value: '#4f0742'
 };
 
-const afterimageParams = {
+const afterimageParameters = {
   dumping: 0.11,
   enabled: false
 };
@@ -85,9 +82,10 @@ export default class Three {
     });
     this.renderer.setSize(device.width, device.height);
     this.renderer.setPixelRatio(Math.min(device.pixelRatio, 2));
-    this.renderer.setClearColor(envParams.backgroundColor, 1);
+    this.renderer.setClearColor(environmentParameters.backgroundColor, 1);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = envParams.toneMappingExposure;
+    this.renderer.toneMappingExposure =
+      environmentParameters.toneMappingExposure;
     this.renderer.physicallyCorrectLights = true;
 
     this.clock = new THREE.Clock();
@@ -110,11 +108,11 @@ export default class Three {
     this.pane = new Pane();
 
     // 创建 envFolder
-    const envFolder = this.pane.addFolder({
+    const environmentFolder = this.pane.addFolder({
       title: 'envFolder'
     });
-    envFolder
-      .addBinding(envParams, 'toneMappingExposure', {
+    environmentFolder
+      .addBinding(environmentParameters, 'toneMappingExposure', {
         label: 'Renderer Tone Mapping Exposure',
         min: 0,
         max: 5,
@@ -124,14 +122,14 @@ export default class Three {
         this.renderer.toneMappingExposure = value;
         console.log(value);
       });
-    envFolder.addBinding(envParams, 'rotationSpeed', {
+    environmentFolder.addBinding(environmentParameters, 'rotationSpeed', {
       label: 'rotationSpeed',
       min: 0,
       max: 10,
       step: 0.1
     });
-    envFolder
-      .addBinding(envParams, 'backgroundColor', {
+    environmentFolder
+      .addBinding(environmentParameters, 'backgroundColor', {
         view: 'color'
       })
       .on('change', ({ value }) => {
@@ -142,7 +140,7 @@ export default class Three {
       title: 'postFolder'
     });
     postFolder
-      .addBinding(postParams, 'threshold', {
+      .addBinding(postParameters, 'threshold', {
         label: 'threshold',
         min: 0,
         max: 1,
@@ -152,17 +150,17 @@ export default class Three {
         this.bloomPass.threshold = value;
       });
     postFolder
-      .addBinding(postParams, 'strength', {
+      .addBinding(postParameters, 'strength', {
         label: 'strength',
         min: 0,
         max: 2,
-        step: 0.1
+        step: 0.01
       })
       .on('change', ({ value }) => {
         this.bloomPass.strength = value;
       });
     postFolder
-      .addBinding(postParams, 'radius', {
+      .addBinding(postParameters, 'radius', {
         label: 'radius',
         min: 0,
         max: 1,
@@ -173,7 +171,7 @@ export default class Three {
       });
 
     postFolder
-      .addBinding(afterimageParams, 'enabled', {
+      .addBinding(afterimageParameters, 'enabled', {
         label: 'afterimagePass',
         type: 'boolean'
       })
@@ -182,7 +180,7 @@ export default class Three {
       });
 
     postFolder
-      .addBinding(afterimageParams, 'dumping', {
+      .addBinding(afterimageParameters, 'dumping', {
         label: 'dumping',
         min: 0,
         max: 1,
@@ -194,19 +192,19 @@ export default class Three {
     const eulerFolder = this.pane.addFolder({
       title: 'eulerFolder'
     });
-    eulerFolder.addBinding(eulerParams, 'x', {
+    eulerFolder.addBinding(eulerParameters, 'x', {
       label: 'x',
       min: -Math.PI,
       max: Math.PI,
       step: 0.01
     });
-    eulerFolder.addBinding(eulerParams, 'y', {
+    eulerFolder.addBinding(eulerParameters, 'y', {
       label: 'y',
       min: -Math.PI,
       max: Math.PI,
       step: 0.01
     });
-    eulerFolder.addBinding(eulerParams, 'z', {
+    eulerFolder.addBinding(eulerParameters, 'z', {
       label: 'z',
       min: -Math.PI,
       max: Math.PI,
@@ -235,12 +233,12 @@ export default class Three {
       0.4,
       0.85
     );
-    this.bloomPass.threshold = postParams.threshold;
-    this.bloomPass.strength = postParams.strength;
-    this.bloomPass.radius = postParams.radius;
+    this.bloomPass.threshold = postParameters.threshold;
+    this.bloomPass.strength = postParameters.strength;
+    this.bloomPass.radius = postParameters.radius;
 
     this.afterimagePass = new AfterimagePass();
-    this.afterimagePass.enabled = afterimageParams.enabled;
+    this.afterimagePass.enabled = afterimageParameters.enabled;
     this.afterimagePass.dumping = 0.5;
 
     this.outputPass = new OutputPass();
@@ -260,7 +258,7 @@ export default class Three {
       './img/envmap.jpg',
       (texture) => {
         this.envMap = this.pmremGenerator.fromEquirectangular(texture).texture;
-        this.envMap.encoding = THREE.sRGBEncoding;
+        this.envMap.encoding = THREE.SRGBColorSpace;
         this.humanMaterial = new THREE.MeshStandardMaterial({
           color: '#674343',
           metalness: 1,
@@ -283,24 +281,24 @@ export default class Three {
     );
   }
 
-  setLine(num) {
+  setLine(number_) {
     this.lineGroup = __getLineGroup();
     this.lineGroup.position.set(0, 0, -4);
     this.scene.add(this.lineGroup);
 
     function __getLineGroup() {
       const group = new THREE.Group();
-      for (let i = 0; i < num; i++) {
+      for (let index = 0; index < number_; index++) {
         const line = __getLine();
         group.add(line);
       }
 
       function __updateGroup(time, speed = 1) {
-        group.rotation.z -= speed * 0.01;
-        group.rotation.y -= speed * 0.02;
-        group.children.forEach((line) => {
+        group.rotation.z -= speed * 0.008;
+        group.rotation.y -= speed * 0.012;
+        for (const line of group.children) {
           line.userData.update(time);
-        });
+        }
       }
       group.userData = {
         update: __updateGroup
@@ -309,15 +307,15 @@ export default class Three {
     }
 
     function __getLine() {
-      const vertex = [0.25, 0, 0, 1.5, 0, 0, 3, 0, 0];
+      const vertex = [0.25, 0, 0, 1.5, 0, 0, 5, 0, 0];
       const colors = [];
       const length = vertex.length / 3;
       // 利用HSL 生成随机颜色
-      for (let i = 0; i < 3; i++) {
+      for (let index = 0; index < 3; index++) {
         const hue = Math.random();
         const saturation = 1;
-        // const lightness = 1.0 - i / length;
-        const lightness = 0.2 + Math.random() * 0.3;
+        const lightness = 1 - index / length;
+        // const lightness = 0.2 + Math.random() * 0.3;
         let color = new THREE.Color();
         color.setHSL(hue, saturation, lightness);
         colors.push(color.r, color.g, color.b);
@@ -368,16 +366,14 @@ export default class Three {
   render() {
     const elapsedTime = this.clock.getElapsedTime();
     this.composer.render(this.scene, this.camera);
-    if (this.human) {
-      if (this.humanMaterial.userData) {
-        // 更新时间
-        this.human.material.envMapRotation = new THREE.Euler(
-          eulerParams.x + elapsedTime * envParams.rotationSpeed,
-          1.47,
-          eulerParams.z
-        );
-        this.human.material.needsUpdate = true;
-      }
+    if (this.human && this.humanMaterial.userData) {
+      // 更新时间
+      this.human.material.envMapRotation = new THREE.Euler(
+        eulerParameters.x + elapsedTime * environmentParameters.rotationSpeed,
+        1.47,
+        eulerParameters.z
+      );
+      this.human.material.needsUpdate = true;
     }
 
     this.lineGroup.userData.update(elapsedTime);
@@ -405,4 +401,3 @@ export default class Three {
     this.composer.setPixelRatio(Math.min(device.pixelRatio, 2));
   }
 }
-

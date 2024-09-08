@@ -71,7 +71,6 @@ export default class Three {
     );
     this.camera.position.set(0, 1, 0.41);
 
-    // this.orbitControls = new OrbitControls(this.camera, this.canvas);
     this.scene.add(this.camera);
 
     this.renderer = new THREE.WebGLRenderer({
@@ -93,12 +92,10 @@ export default class Three {
     // Instantiate a loader
     this.gltfLoader = new GLTFLoader();
 
-    this.setLine(15);
+    this.setMouseMoveEvent();
+    this.setBackground();
     this.setPost();
     this.setObject();
-    // this.setLights();
-    this.setBackgroundColor();
-    this.setMouseMoveEvent();
     this.render();
     this.setResize();
     this.setDebugger();
@@ -281,88 +278,20 @@ export default class Three {
     );
   }
 
-  setLine(number_) {
-    this.lineGroup = __getLineGroup();
-    this.lineGroup.position.set(0, 0, -4);
-    this.scene.add(this.lineGroup);
-
-    function __getLineGroup() {
-      const group = new THREE.Group();
-      for (let index = 0; index < number_; index++) {
-        const line = __getLine();
-        group.add(line);
-      }
-
-      function __updateGroup(time, speed = 1) {
-        group.rotation.z -= speed * 0.008;
-        group.rotation.y -= speed * 0.012;
-        for (const line of group.children) {
-          line.userData.update(time);
-        }
-      }
-      group.userData = {
-        update: __updateGroup
-      };
-      return group;
-    }
-
-    function __getLine() {
-      const vertex = [0.25, 0, 0, 1.5, 0, 0, 5, 0, 0];
-      const colors = [];
-      const length = vertex.length / 3;
-      // 利用HSL 生成随机颜色
-      for (let index = 0; index < 3; index++) {
-        const hue = Math.random();
-        const saturation = 1;
-        const lightness = 1 - index / length;
-        // const lightness = 0.2 + Math.random() * 0.3;
-        let color = new THREE.Color();
-        color.setHSL(hue, saturation, lightness);
-        colors.push(color.r, color.g, color.b);
-      }
-
-      const lineGeo = new LineGeometry();
-      lineGeo.setPositions(vertex);
-      lineGeo.setColors(colors);
-      const lineMat = new LineMaterial({
-        color: '#e78719',
-        linewidth: 4,
-        dashed: true,
-        dashSize: 0.5,
-        gapSize: 0.5,
-        dashOffset: 0,
-        vertexColors: true
-      });
-      lineMat.resolution.set(device.width, device.height);
-      const line = new Line2(lineGeo, lineMat);
-      line.rotation.y = Math.random() * Math.PI * 2;
-      line.rotation.z = Math.random() * Math.PI * 2;
-      line.computeLineDistances();
-
-      // 自定义更新函数
-      const rate = Math.random() * 2 - 1;
-      function update(time) {
-        line.material.dashOffset = -time * rate * 5;
-      }
-      line.userData = {
-        update: update
-      };
-      return line;
-    }
-  }
-
-  setBackgroundColor() {
+  setBackground() {
     const textureLoader = new THREE.TextureLoader();
     const starSprite = textureLoader.load('./img/circle.png');
     const stars = getStarfield({ numStars: 4500, sprite: starSprite });
     this.scene.add(stars);
   }
+
   setMouseMoveEvent() {
     document.addEventListener('mousemove', function (event) {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     });
   }
+
   render() {
     const elapsedTime = this.clock.getElapsedTime();
     this.composer.render(this.scene, this.camera);
@@ -376,10 +305,16 @@ export default class Three {
       this.human.material.needsUpdate = true;
     }
 
-    this.lineGroup.userData.update(elapsedTime);
-
-    this.camera.position.x += mouse.x * 0.01 - this.camera.position.x;
-    this.camera.position.y += mouse.y * 0.03 - this.camera.position.y + 0.77;
+    const targetPosition = new THREE.Vector3(
+      mouse.x * 0.02,
+      mouse.y * 0.03 + 0.77,
+      this.camera.position.z // 保持相机的Z轴位置不变
+    );
+    // 使用lerp进行缓动
+    const lerpFactor = 0.05; // 你可以调整这个值来改变缓动的速度
+    this.camera.position.lerp(targetPosition, lerpFactor);
+    // this.camera.position.x += mouse.x * 0.01 - this.camera.position.x;
+    // this.camera.position.y += mouse.y * 0.03 - this.camera.position.y + 0.77;
     requestAnimationFrame(this.render.bind(this));
   }
 

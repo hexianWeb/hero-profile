@@ -8,10 +8,13 @@
  * Copyright (c) 2024 by Foxconn MAC(I) network application development, All Rights Reserved.
  */
 import '../css/global.css';
+import '../css/index.css';
 import '../css/container.css';
 import '../scss/global.scss';
+
 import gsap from 'gsap';
 import SplitTextJS from 'split-text-js';
+
 import Three from './three';
 
 const title = gsap.utils.toArray('li');
@@ -54,4 +57,3 @@ window.addEventListener('load', () => {
     new Three(document.querySelector('#canvas'));
   }
 });
-

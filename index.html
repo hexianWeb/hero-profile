@@ -8,72 +8,6 @@
 
     <!-- GENERAL -->
     <title>Vite ThreeJS — HeXian</title>
-    <meta name="title" content="Vite ThreeJS — Template" />
-    <meta name="application-name" content="Vite ThreeJS — Template" />
-    <meta
-      name="description"
-      content="Boilerplate template designed to quickly bootstrapping a 3D Web App, SPA, website or landing page with Three.JS, GLSL, Vite, TailwindCSS, ESLint, Husky and much more in just 30 seconds."
-    />
-    <meta
-      name="keywords"
-      content="
-        three, three js, threejs, three.js, three-js,
-        three template, three js template, threejs template, three.js template, three-js template,
-        three vite, three js vite, threejs vite, three.js vite, three-js vite,
-        three vite template, three js vite templante, threejs vite templante, three.js vite templante, three-js vite templante,
-        webgl, 3D, GLSL, GLSL shaders, shaders, web3D,
-        javascript, js, vanilla-javascript, vanilla-js,
-        development, template, boilerplate, template-boilerplate, boilerplate-frontend, starter-kit,
-        vite, vite template, swc, husky, eslint, commitlint, prettier,
-        postcss, tailwind, tailwindcss, sass, scss, css,
-        github, web app, web-app, webapp, spa
-      "
-    />
-    <link rel="manifest" href="/app.webmanifest" />
-    <link rel="icon" sizes="192x192" href="/favicon/favicon-192.webp" />
-    <link rel="icon" sizes="512x512" href="/favicon/favicon-512.webp" />
-
-    <!-- GOOGLE -->
-    <meta name="rating" content="General" />
-    <meta name="robots" content="index,follow" />
-    <link
-      rel="sitemap"
-      type="application/xml"
-      title="Sitemap"
-      href="/sitemap.xml"
-    />
-    <meta
-      name="google-site-verification"
-      content="43hCqye5FYTS4SnBMPKNFP-wBhfLHwRBykWJF1WJawo"
-    />
-
-    <!-- FACEBOOK -->
-    <meta property="og:url" content="https://webpack-three-js.d1a.app" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Webpack ThreeJS — Template" />
-    <meta
-      property="og:description"
-      content="Boilerplate template designed to quickly bootstrapping a 3D Web App, SPA, website or landing page with Three.JS, GLSL, Vite, TailwindCSS, ESLint, Husky and much more in just 30 seconds."
-    />
-    <meta property="og:image" content="/og.jpg" />
-
-    <!-- TWITTER -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta property="twitter:domain" content="webpack-three-js.d1a.app" />
-    <meta property="twitter:url" content="https://webpack-three-js.d1a.app" />
-    <meta name="twitter:title" content="Webpack ThreeJS — Template" />
-    <meta
-      name="twitter:description"
-      content="Boilerplate template designed to quickly bootstrapping a 3D Web App, SPA, website or landing page with Three.JS, GLSL, Vite, TailwindCSS, ESLint, Husky and much more in just 30 seconds."
-    />
-    <meta name="twitter:image" content="/og.jpg" />
-
-    <!-- iOS -->
-    <link rel="apple-touch-icon" href="/favicon/favicon-512.webp" />
-    <link rel="mask-icon" href="/favicon/favicon-512.webp" color="black" />
-    <meta name="apple-mobile-web-app-title" content="Vite ThreeJS — Template" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
     <!-- ANDROID -->
     <meta name="theme-color" content="#000" />
@@ -81,52 +15,47 @@
 
     <script defer src="/_vercel/insights/script.js"></script>
   </head>
+
   <body>
+    <style></style>
     <noscript class="text-center text-lg text-red-500">
       Enable JavaScript to enjoy all the features of this app.
     </noscript>
-    <main class="flex h-full bg-primary text-color">
-      <header
-        class="absolute top-0 z-[1] w-full cursor-default bg-accent-primary sm:w-auto"
-      >
-        <div class="relative flex justify-center">
-          <h1
-            class="z-[1] select-none p-4 text-xl font-semibold sm:text-2xl md:text-3xl"
-          >
-            Vite ThreeJS — HeXian
-          </h1>
-          <div
-            class="arrow-right top absolute -right-[43px] -top-[35px] hidden h-0 w-0 rotate-90 border-b-[60px] border-t-[70px] border-b-transparent border-l-accent-primary border-t-transparent sm:-right-[40px] sm:block sm:border-l-[70px] md:-right-[43px] md:border-l-[76px]"
-          ></div>
+
+    <div class="main-container">
+      <canvas id="canvas" class="z-[0] h-full w-full"></canvas>
+      <header class="header">
+        <div class="logo">MY PERSONAL BLOG</div>
+        <nav class="nav">
+          <a href="#">HOME</a>
+          <a href="#">ABOUT</a>
+          <a href="#">TOPIC</a>
+          <a href="#">SERVICES</a>
+          <a href="#">SUBMIT</a>
+        </nav>
+        <div class="social-icons">
+          <a href="#" aria-label="Search">&#128269;</a>
+          <a href="#" aria-label="Email">&#9993;</a>
+          <a href="#" aria-label="Twitter">&#128038;</a>
+          <a href="#" aria-label="Menu">&#9776;</a>
         </div>
       </header>
 
-      <div class="content">
-        <div class="content__container">
-          <ul class="content__container__list">
-            <li class="content__container__list__item">
-              ice 图形学社区认证达人
-            </li>
-            <li class="content__container__list__item">Tresjs 开源贡献者</li>
-            <li class="content__container__list__item">TvTjs 开源贡献者</li>
-            <li class="content__container__list__item">TvTjs 社区维护人员</li>
-            <li class="content__container__list__item">作者: HeXian</li>
-            <!-- <li class="content__container__list__item">
-              2006 美国周刊年度风云人物
-            </li>
-            <li class="content__container__list__item">
-              2008 感动中国组委会特别奖
-            </li>
-            <li class="content__container__list__item">2019 年度地球卫士</li>
-            <li class="content__container__list__item">
-              2022 奥林匹克杯获得者
-            </li>
-            <li class="content__container__list__item">作者: HeXian</li> -->
-          </ul>
-        </div>
+      <main class="content">
+        <h1>PERSONAL BLOG HOMEPAGE</h1>
+        <button>BLACK BROWSE</button>
+      </main>
+
+      <div class="content__container">
+        <ul class="content__container__list">
+          <li class="content__container__list__item">ice 图形学社区认证达人</li>
+          <li class="content__container__list__item">Tresjs 开源贡献者</li>
+          <li class="content__container__list__item">TvTjs 开源贡献者</li>
+          <li class="content__container__list__item">TvTjs 社区维护人员</li>
+          <li class="content__container__list__item">作者: HeXian</li>
+        </ul>
       </div>
-      <canvas id="canvas" class="z-[0] h-full w-full"></canvas>
-    </main>
+    </div>
 
     <script type="module" src="src/js/index.js"></script>
   </body>
